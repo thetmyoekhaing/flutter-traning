@@ -1,11 +1,26 @@
 void main() {
+  //sprcifier
+  //final and const => Constant
+
   //string
   String str = "thet";
-  print(str);
+
+  //String method
+  print(str.hashCode);
+  print("thet".hashCode);
+  print(str.hashCode == "thet".hashCode ? true : false);
+
+  print(str.runes);
+
+  String num = "20";
+
+  //String to int
+  int num2 = int.parse(num);
 
   //int
   int number = 19;
   print(number);
+  print(num2 + number);
 
   //double
   double float = 19.1;

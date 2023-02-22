@@ -1,8 +1,9 @@
 # Flutter Training
 
-## Day1
+### Day1
 
-### Data Types
+<details>
+Data Types
 
 - String
 
@@ -24,5 +25,7 @@ double float = 19.2;
 
 - Bool
 - Collection
-  - List
   - Map
+  - List
+
+</details>
