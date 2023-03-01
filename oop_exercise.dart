@@ -57,7 +57,6 @@ void main() {
   max = checkNullEmpty(
     output: 'Enter your guess number',
     input: max,
-    isMax: true,
     validator: (input) => validateNumberInput(input, 1, 9),
   );
 
@@ -69,10 +68,39 @@ void main() {
   print(user1.userGuessNumber);
 }
 
+// String? checkNullEmpty(
+//     {required String output,
+//     String? input,
+//     bool isMax = false,
+//     bool isBalance = false}) {
+//   while (input == null || input.trim().isEmpty) {
+//     print(output);
+//     input = stdin.readLineSync()?.trim();
+//   }
+//   if (isMax) {
+//     int? maxNumber = int.tryParse(input);
+//     while (maxNumber == null || maxNumber < 1 || maxNumber > 9) {
+//       print("Max number must be between 1 and 9, please try again.");
+//       input = stdin.readLineSync()?.trim();
+//       maxNumber = int.tryParse(input!);
+//     }
+//     return input;
+//   } else if (isBalance) {
+//     int? balanceInt = int.tryParse(input);
+//     while (balanceInt == null || balanceInt.isNegative) {
+//       print("Please type valid number");
+//       input = stdin.readLineSync()?.trim();
+//       balanceInt = int.tryParse(input!);
+//     }
+//   } else {
+//     return input;
+//   }
+//   return null;
+// }
+
 String? checkNullEmpty({
   required String output,
   String? input,
-  bool isMax = false,
   String? Function(String?)? validator,
 }) {
   while (input == null || input.trim().isEmpty) {
