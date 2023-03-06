@@ -5,31 +5,43 @@
 // // 5. Check user can play more game with his money
 
 import 'dart:io';
+import 'dart:math';
 
 /// This class is to guess the number between 1 - 9 and if you win , you can continue to play more
 class Guess {
   final String name;
   //user money
-  late int _balance;
+  late int _balance = 0;
 
   late int? userGuessNumber;
 
   late int earn;
-  late bool? play;
+
+  bool win = false;
 
   get getBalance {
     return _balance;
   }
 
   set setBalance(int value) {
-    _balance = value;
+    _balance += value;
   }
 
-  Guess(
-      {required this.name,
-      required this.earn,
-      bool? this.play,
-      int? this.userGuessNumber});
+  void winOrLose() {
+    var random = Random();
+    final int randomNumber = random.nextInt(9) + 1;
+    int difference = (randomNumber - userGuessNumber!).abs();
+    if (difference <= 2) {
+      print(
+          "You win , your guess number is $userGuessNumber and random number is $randomNumber");
+      win = true;
+    } else {
+      print("you lose , your random numer is $randomNumber");
+      win = false;
+    }
+  }
+
+  Guess({required this.name, required this.earn, int? this.userGuessNumber});
 }
 
 void main() {
@@ -41,31 +53,43 @@ void main() {
 
   String? max;
 
+  late int earnMoney, balanceMoney;
+
   username = checkNullEmpty(output: "Enter your username", input: username);
 
   balance = checkNullEmpty(
     output: 'Enter your balance',
     input: balance,
-    validator: (input) => validateNumberInput(input, 0, 999999),
+    validator: (input) =>
+        validateNumberInput(input: input, min: 1, max: 999999),
   );
+  balanceMoney = int.parse(balance!);
 
   earn = checkNullEmpty(
       output: "Enter your earnings",
       input: earn,
-      validator: (input) => validateNumberInput(input, 0, 999999));
+      validator: (input) =>
+          validateNumberInput(input: input, min: 1, max: balanceMoney));
+  earnMoney = int.parse(earn!);
 
   max = checkNullEmpty(
     output: 'Enter your guess number',
     input: max,
-    validator: (input) => validateNumberInput(input, 1, 9),
+    validator: (input) => validateNumberInput(input: input, min: 1, max: 9),
   );
 
-  final user1 = Guess(
-      name: username!,
-      earn: int.parse(earn!),
-      userGuessNumber: int.parse(max!));
-  user1.setBalance = int.parse(balance!);
-  print(user1.userGuessNumber);
+  Guess user1 =
+      Guess(name: username!, earn: earnMoney, userGuessNumber: int.parse(max!));
+  user1.setBalance = balanceMoney;
+  user1.winOrLose();
+
+  if (user1.win == true) {
+    user1.setBalance = earnMoney;
+    print("Your balance now is ${user1.getBalance}");
+  } else {
+    user1.setBalance = -earnMoney;
+    print("Your current remain balance ${user1.getBalance}");
+  }
 }
 
 // String? checkNullEmpty(
@@ -98,11 +122,10 @@ void main() {
 //   return null;
 // }
 
-String? checkNullEmpty({
-  required String output,
-  String? input,
-  String? Function(String?)? validator,
-}) {
+String? checkNullEmpty(
+    {required String output,
+    String? input,
+    String? Function(String?)? validator}) {
   while (input == null || input.trim().isEmpty) {
     print(output);
     input = stdin.readLineSync()?.trim();
@@ -113,12 +136,17 @@ String? checkNullEmpty({
   return input;
 }
 
-String? validateNumberInput(String? input, int min, int max) {
+String? validateNumberInput(
+    {required String? input, required int min, required int max}) {
   int? number = int.tryParse(input ?? '');
   while (number == null || number < min || number > max) {
-    print('Please enter a number between $min and $max');
+    print('Try again!!! Please enter a number between $min and $max');
     input = stdin.readLineSync()?.trim();
     number = int.tryParse(input ?? '');
   }
   return input;
 }
+
+// String? validateGuessNumber(String? input) {
+//   return validateNumberInput(input: input, min: 1, max: 9);
+// }
