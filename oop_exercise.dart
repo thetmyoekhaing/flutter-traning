@@ -9,7 +9,7 @@ import 'dart:math';
 
 /// This class is to guess the number between 1 - 9 and if you win , you can continue to play more
 class Guess {
-  final String name;
+  late String? name;
   //user money
   late int _balance = 0;
 
@@ -41,7 +41,7 @@ class Guess {
     }
   }
 
-  Guess({required this.name, required this.earn, int? this.userGuessNumber});
+  Guess({required this.earn, int? this.userGuessNumber, String? this.name});
 }
 
 void main() {
@@ -54,6 +54,8 @@ void main() {
   String? max;
 
   late int earnMoney, balanceMoney;
+
+  late String? playMoreGame;
 
   username = checkNullEmpty(output: "Enter your username", input: username);
 
@@ -69,7 +71,7 @@ void main() {
       output: "Enter your earnings",
       input: earn,
       validator: (input) =>
-          validateNumberInput(input: input, min: 1, max: balanceMoney));
+          validateNumberInput(input: input, min: 1, max: balanceMoney - 1));
   earnMoney = int.parse(earn!);
 
   max = checkNullEmpty(
@@ -83,12 +85,66 @@ void main() {
   user1.setBalance = balanceMoney;
   user1.winOrLose();
 
-  if (user1.win == true) {
+  while (user1.win == true) {
     user1.setBalance = earnMoney;
     print("Your balance now is ${user1.getBalance}");
-  } else {
+    print("If you want to play more game? y for yes / n for no");
+    playMoreGame = stdin.readLineSync()?.trim();
+    if (playMoreGame == 'y') {
+      int newBalance = user1.getBalance;
+      String? newGuess, newEarn;
+
+      newEarn = playMore(
+          input: newEarn,
+          out: "Enter your earn money",
+          min: 1,
+          max: newBalance - 1);
+      earnMoney = int.parse(newEarn!);
+
+      newGuess = playMore(
+          input: newGuess, out: "Enter your guess number", min: 1, max: 9);
+
+      Guess(earn: earnMoney, userGuessNumber: int.parse(newGuess!));
+      user1.winOrLose();
+    } else {
+      print("See you later!!!");
+    }
+  }
+
+  while (user1.win == false) {
     user1.setBalance = -earnMoney;
-    print("Your current remain balance ${user1.getBalance}");
+    int newBalance = user1.getBalance;
+    if (newBalance == 1) {
+      print(
+          "Your balance is $newBalance you need at least 2 to play more , try adding new balance , see you later!");
+      break;
+    } else {
+      print("Your current remain balance ${user1.getBalance}");
+      if (user1.getBalance > 0) {
+        print("If you want to play more game? y for yes / n for no");
+        playMoreGame = stdin.readLineSync()?.trim();
+        if (playMoreGame == 'y') {
+          String? newGuess, newEarn;
+          late int newGuessNum;
+
+          newEarn = playMore(
+              input: newEarn,
+              out: "Enter your earn money",
+              min: 1,
+              max: newBalance - 1);
+          earnMoney = int.parse(newEarn!);
+
+          newGuess = playMore(
+              input: newGuess, out: "Enter your guess number", min: 1, max: 9);
+          newGuessNum = int.parse(newGuess!);
+
+          Guess(earn: earnMoney, userGuessNumber: newGuessNum);
+          user1.winOrLose();
+        } else {
+          print("See you later!!!");
+        }
+      }
+    }
   }
 }
 
@@ -150,3 +206,21 @@ String? validateNumberInput(
 // String? validateGuessNumber(String? input) {
 //   return validateNumberInput(input: input, min: 1, max: 9);
 // }
+
+String? playMore({
+  String? input,
+  String? out,
+  int? min,
+  int? max,
+}) {
+  if (input == null) {
+    input = checkNullEmpty(
+      output: out!,
+      input: input,
+      validator: (input) =>
+          validateNumberInput(input: input, min: min!, max: max!),
+    );
+    return input;
+  }
+  return null;
+}
